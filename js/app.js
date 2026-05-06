@@ -23,6 +23,7 @@ function addCompetitor() {
   STATE.competitors.push(v);
   input.value = '';
   renderChips();
+  console.log('[DEBUG] competitors now:', JSON.stringify(STATE.competitors));
 }
 
 function removeCompetitor(c) {
@@ -90,6 +91,10 @@ async function startPipeline() {
 
   if (!brand)  { showSetupError('Please enter a brand name.');            return; }
 
+  var apiKey = (document.getElementById('api-key-input') || {value:''}).value.trim();
+  if (!apiKey) { showSetupError('Please enter your Anthropic API key.'); return; }
+  window.ANTHROPIC_KEY = apiKey;
+
   STATE.brand    = brand;
   STATE.mentions = [];
   STATE.analysis = null;
@@ -103,6 +108,9 @@ async function startPipeline() {
   document.getElementById('pipeline-title').textContent = 'Agents working…';
 
   try {
+    console.log('[DEBUG] brand:', STATE.brand);
+    console.log('[DEBUG] competitors:', JSON.stringify(STATE.competitors));
+    console.log('[DEBUG] competitors length:', STATE.competitors.length);
     setAgentState(0, 'active');
     STATE.mentions = await agentScrape(STATE.brand, STATE.competitors, function(m) { addLog(0, m); });
     setAgentState(0, 'done');
@@ -139,6 +147,7 @@ function resetToSetup() {
     delete CHARTS[k];
   });
 
+  window.ANTHROPIC_KEY = '';
   STATE.brand       = '';
   STATE.competitors = [];
   STATE.mentions    = [];
