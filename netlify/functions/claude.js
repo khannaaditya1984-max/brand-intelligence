@@ -33,7 +33,6 @@ exports.handler = async function(event) {
   }
 
 
-  var apiKey = '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';
 
 
   try {
